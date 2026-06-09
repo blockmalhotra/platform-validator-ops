@@ -1,9 +1,4 @@
 graph TD
-    subgraph Validators
-        G[Geth]
-        E[Erigon]
-        L[Lighthouse]
-    end
-    G --> H[Health API]
-    E --> H
-    L --> H
+    G[Geth] --> H[Health]
+    E[Erigon] --> H
+    L[LH] --> H

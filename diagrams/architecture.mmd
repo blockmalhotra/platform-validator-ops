@@ -1,0 +1,6 @@
+graph TD
+    V[Validators Geth Erigon LH] --> H[Health API Go]
+    H --> P[Prometheus]
+    P --> G[Grafana]
+    H --> K[K8s Stateful]
+    K --> A[ArgoCD]

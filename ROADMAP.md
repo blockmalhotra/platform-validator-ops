@@ -1,0 +1,2 @@
+# ROADMAP
+- Full validator integration
