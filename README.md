@@ -173,7 +173,7 @@ Runs on push/PR.
 - StatefulSet with volumeClaimTemplates is mandatory for blockchain clients; ephemeral storage loses chain state and forces resync.
 - Dedicated health API sidecar keeps monitoring lightweight and decouples it from the full validator binary.
 - Compose + k8s manifest parity enables fast local iteration while preserving prod behavior.
-- CHANGEME placeholders in secrets force explicit production secret injection and prevent accidental commits of real keys.
+- CHANGEME values in secrets force explicit production secret injection and prevent accidental commits of real keys.
 
 ## License
 
