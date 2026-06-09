@@ -85,7 +85,7 @@ graph TD
 - **Orchestration**: Kubernetes (StatefulSet, Service, ConfigMap, Secret)
 - **Observability**: Prometheus, Grafana
 - **GitOps**: ArgoCD patterns
-- **Storage/Secrets**: Persistent volumes, CHANGEME placeholders
+- **Storage/Secrets**: Persistent volumes, CHANGEME values only
 
 ## Repository Structure
 
