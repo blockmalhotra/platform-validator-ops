@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ethereum-validator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ethereum-validator
+  template:
+    metadata:
+      labels:
+        app: ethereum-validator
+    spec:
+      containers:
+      - name: geth
+        image: ethereum/client-go:stable
+        args: ["--http", "--http.addr", "0.0.0.0", "--syncmode", "light"]
+        ports:
+        - containerPort: 8545
+      - name: lighthouse
+        image: sigp/lighthouse:latest
+        args: ["beacon", "--http", "--http-address", "0.0.0.0"]
+        ports:
+        - containerPort: 5052

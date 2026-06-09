@@ -91,7 +91,7 @@ See docs/troubleshooting.md
 
 ## Screenshots
 
-See screenshots/ (dashboard, k8s pods, prom alerts)
+See screenshots/ (architecture.png, validator-fleet-overview.png, dashboard.png, alert-flow.png)
 
 ## Architecture Diagrams
 
