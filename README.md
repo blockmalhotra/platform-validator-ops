@@ -1,6 +1,10 @@
 # platform-validator-ops
 
+<p align="center">
+
 **Production-inspired Ethereum Validator Operations Platform demonstrating Kubernetes, Observability, High Availability, Secret Management and Blockchain Infrastructure patterns.**
+
+</p>
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
@@ -32,7 +36,7 @@ Lightweight Go health sidecar + Kubernetes StatefulSet reference for Ethereum va
 - [Operational Lessons Learned](#operational-lessons-learned)
 - [Screenshots](#screenshots)
 - [Roadmap](#roadmap)
-- [Business Value](#business-value)
+- [Business Impact](#business-impact)
 - [Resume Relevance](#resume-relevance)
 - [License](#license)
 
@@ -81,8 +85,8 @@ graph TD
 ## Key Engineering Decisions
 
 - StatefulSet chosen for Geth to ensure persistent volumes and ordered startup (k8s/statefulset.yaml shows geth container with volumeClaim and health sidecar).
-- Go health sidecar added to expose /health and /metrics independently of upstream client binaries (app/main.go returns exact status/chain/timestamp/block_height).
-- prometheus.yml mounted via volume in Compose to version config with code (demo/prometheus.yml).
+- Dedicated Go health sidecar container added to StatefulSet to expose standardized /health and /metrics without modifying upstream client binaries (app/main.go and k8s/statefulset.yaml).
+- ConfigMap and volume mounts used for prometheus.yml to keep scrape targets versioned with code (demo/prometheus.yml).
 
 ## Production Considerations
 
@@ -104,16 +108,16 @@ graph TD
 ```
 platform-validator-ops/
 ├── app/main.go                 # health API (status/chain/timestamp/block_height)
-├── docker-compose.yml          # validator-health + prom + grafana
+├── docker-compose.yml          # demo (validator-health + prom + grafana)
 ├── demo/                       # prometheus.yml
 ├── docker/Dockerfile
 ├── k8s/                        # statefulset, service, configmap, secret (CHANGEME), validator-*
 ├── diagrams/                   # architecture.mmd, alert-flow.mmd, dashboard.mmd, validator-fleet-overview.mmd
-├── screenshots/                # architecture.png, validator-fleet-overview.png, dashboard.png, alert-flow.png
+├── screenshots/                # architecture.png, dashboard.png, alert-flow.png, validator-fleet-overview.png
 ├── docs/                       # runbook.md, security.md, troubleshooting.md, production-deployment.md
 ├── scripts/                    # build.sh, health-check.sh
 ├── Makefile
-├── .github/workflows/ci.yml    # build, test, docker
+├── .github/workflows/ci.yml    # validate, build, docker
 └── ROADMAP.md
 ```
 
