@@ -1,44 +1,62 @@
 # platform-validator-ops
 
-Production-ready Ethereum validator operations platform focused on health monitoring, metrics exposure, deployment automation, and Kubernetes-native patterns for reliable staking infrastructure.
+**Production-inspired Ethereum Validator Operations Platform demonstrating Kubernetes, Observability, High Availability, Secret Management and Blockchain Infrastructure patterns.**
 
-![MIT License](https://img.shields.io/badge/license-MIT-green)
-![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
-![Status](https://img.shields.io/badge/status-in--progress-orange)
-![Version](https://img.shields.io/badge/version-v0.1.0--in--progress-blue)
+![Ethereum](https://img.shields.io/badge/Ethereum-3C3C3D?logo=ethereum&logoColor=white)
+![DevOps](https://img.shields.io/badge/DevOps-2496ED)
+![MIT License](https://img.shields.io/badge/license-MIT-green)
+![Status: In Progress](https://img.shields.io/badge/status-in--progress-orange)
+![Version: v0.1.0-in-progress](https://img.shields.io/badge/version-v0.1.0--in--progress-blue)
 
-**Overview** | [Architecture](#architecture) | [Features](#features) | [Deployment](#deployment) | [Monitoring](#monitoring) | [Security](#security) | [Screenshots](#screenshots)
+## Professional Summary
+
+Lightweight Go health sidecar + Kubernetes StatefulSet reference for Ethereum validators (Geth/Erigon/Lighthouse). Exposes /health and Prometheus metrics. Includes demo Compose with Prometheus/Grafana, full k8s manifests (StatefulSet, Service, ConfigMap, Secret with CHANGEME), architecture diagrams, runbooks, and CI. Demonstrates production patterns for node health, persistent storage, and observability without embedding monitoring in the client.
+
+## Table of Contents
+
+- [Problem Statement](#problem-statement)
+- [Why This Exists](#why-this-exists)
+- [Solution Overview](#solution-overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Repository Structure](#repository-structure)
+- [Deployment Workflow](#deployment-workflow)
+- [Monitoring & Observability](#monitoring--observability)
+- [Security Considerations](#security-considerations)
+- [Operational Lessons Learned](#operational-lessons-learned)
+- [Screenshots](#screenshots)
+- [Roadmap](#roadmap)
+- [Business Value](#business-value)
+- [Resume Relevance](#resume-relevance)
+- [License](#license)
 
 ## Problem Statement
 
-Operating Ethereum validator clients (Geth, Erigon, Lighthouse) at scale introduces risk of slashing from downtime, desync, or missed attestations. Manual health checks and ad-hoc monitoring fail at fleet level. Persistent chain state must survive pod restarts. Production requires GitOps, secrets management, and unified observability without embedding monitoring inside the client binary.
+Operating Ethereum validator clients at scale introduces slashing risk from downtime, desync, or missed attestations. Manual health checks and ad-hoc monitoring fail at fleet level. Persistent chain state must survive restarts. Production needs GitOps, secrets hygiene, and unified observability decoupled from the client binary.
 
-## Solution
+## Why This Exists
 
-A lightweight Go health API sidecar exposes standardized `/health` and Prometheus text metrics (status, chain, timestamp, block height). Docker Compose provides local demo with Prometheus + Grafana. Full Kubernetes StatefulSet + Service manifests deliver persistent volumes, ordered deployment, and stable network identity for validators. Architecture diagrams, runbooks, and CI complete the reference.
+Validators on mainnet/holesky/sepolia require always-on signals for uptime and sync status. Existing clients do not expose standardized, scrape-friendly health endpoints out of the box. This provides a thin, deployable reference for reliable staking infrastructure on Kubernetes.
 
-## Features
+## Solution Overview
 
-- Go HTTP health API returning JSON status, chain, timestamp, block_height on /health
-- Prometheus-compatible /metrics endpoint for scraping
-- Docker Compose demo stack with Prometheus + Grafana
-- Kubernetes StatefulSet for geth (light sync, HTTP) with volume for chain data
-- k8s Service, ConfigMap, Secret (CHANGEME values), and supporting manifests
-- Architecture diagrams (Mermaid) and operational runbooks
-- CI pipeline: compose validation, build, docker
+Go HTTP API returns JSON status (ok, chain, timestamp, block_height) and Prometheus text metrics. Docker Compose wires local Prometheus + Grafana. Kubernetes StatefulSet + Service + supporting manifests deliver ordered, persistent validator pods with volume for chain data. Diagrams, runbooks, and CI complete the reference implementation.
 
-## Technology Stack
+## Key Features
 
-- **Language/Runtime**: Go
-- **Packaging**: Docker, Makefile
-- **Orchestration**: Kubernetes (StatefulSet, Service)
-- **Observability**: Prometheus, Grafana
-- **GitOps patterns**: ArgoCD references
-- **Storage/Secrets**: Persistent volumes, Secret with CHANGEME values
+- Go health API: /health returns status, chain, timestamp, block_height
+- /metrics Prometheus text format for scraping
+- Docker Compose demo: validator-health + Prometheus + Grafana
+- Kubernetes StatefulSet for Geth (light sync, HTTP) + health sidecar, with volumeClaim for chain data
+- k8s Service, ConfigMap, Secret (CHANGEME values), validator-* manifests
+- Mermaid architecture diagrams and operational runbooks
+- CI: Go build/test + Docker validation
 
 ## Architecture
 
@@ -54,42 +72,72 @@ graph TD
 
 ### Component Breakdown
 
-- **Ingress**: Port exposure via compose (8080 health, 9090 prom, 3000 grafana) or k8s Service
-- **Service**: validator Service + validator-service.yaml for discovery and scrape targets
+- **Ingress**: Compose ports (8080 health, 9090 prom, 3000 grafana) or k8s Service
+- **Service**: validator Service + validator-service.yaml for discovery and scrape
 - **Storage**: StatefulSet volumeClaimTemplates for chain data; Longhorn in full platform
-- **Monitoring**: /health and Prometheus text; Grafana for uptime, sync lag, alerts
-- **Deployment flow**: `docker compose up --build`; `kubectl apply -f k8s/` or ArgoCD sync
+- **Monitoring**: /health + Prometheus text; Grafana for uptime, sync lag, alerts
+- **Deployment flow**: `docker compose up --build`; `kubectl apply -f k8s/` or ArgoCD
 
-<details>
-<summary>Show full architecture.mmd</summary>
+## Technology Stack
 
-```mermaid
-graph TD
-    V[Validators Geth Erigon LH] --> H[Health API Go]
-    H --> P[Prometheus]
-    P --> G[Grafana]
-    H --> K[K8s Stateful]
-    K --> A[ArgoCD]
-```
-</details>
+- **Language**: Go (health API)
+- **Containers**: Docker, Compose, Makefile
+- **Orchestration**: Kubernetes (StatefulSet, Service, ConfigMap, Secret)
+- **Observability**: Prometheus, Grafana
+- **GitOps**: ArgoCD patterns
+- **Storage/Secrets**: Persistent volumes, CHANGEME placeholders
 
 ## Repository Structure
 
 ```
 platform-validator-ops/
-├── app/main.go                 # health API (status, chain, block_height)
-├── docker-compose.yml          # demo (validator-health + prom + grafana)
+├── app/main.go                 # health API (status/chain/timestamp/block_height)
+├── docker-compose.yml          # validator-health + prom + grafana
 ├── demo/                       # prometheus.yml
 ├── docker/Dockerfile
 ├── k8s/                        # statefulset, service, configmap, secret (CHANGEME), validator-*
 ├── diagrams/                   # architecture.mmd, alert-flow.mmd, dashboard.mmd, validator-fleet-overview.mmd
-├── screenshots/                # architecture.png, dashboard.png, alert-flow.png, validator-fleet-overview.png
+├── screenshots/                # architecture.png, validator-fleet-overview.png, dashboard.png, alert-flow.png
 ├── docs/                       # runbook.md, security.md, troubleshooting.md, production-deployment.md
 ├── scripts/                    # build.sh, health-check.sh
 ├── Makefile
-├── .github/workflows/ci.yml    # validate, build, docker
+├── .github/workflows/ci.yml    # build, test, docker
 └── ROADMAP.md
 ```
+
+## Deployment Workflow
+
+```bash
+git clone https://github.com/blockmalhotra/platform-validator-ops
+cd platform-validator-ops
+docker compose up --build
+curl http://localhost:8080/health
+curl http://localhost:8080/metrics
+# Kubernetes
+kubectl apply -f k8s/
+# or ArgoCD sync per docs/production-deployment.md
+```
+
+## Monitoring & Observability
+
+- /health: {"status":"ok","chain":"...","timestamp":"...","block_height":N}
+- /metrics: Prometheus text
+- Grafana dashboards for validator uptime, sync lag, offline alerts
+- Runbook: docs/runbook.md
+
+## Security Considerations
+
+- Secrets use CHANGEME values only (k8s/secret.yml)
+- No validator keys or mnemonics in images or defaults
+- mTLS and k8s RBAC referenced in docs/security.md
+- Production requires explicit secret injection (Vault patterns)
+
+## Operational Lessons Learned
+
+- StatefulSet + volumeClaimTemplates required for blockchain clients; ephemeral pods lose chain state.
+- Dedicated health API keeps monitoring lightweight and client-agnostic.
+- Compose + k8s parity enables fast local validation before cluster apply.
+- CHANGEME values in secrets enforce explicit production handling and prevent leaks.
 
 ## Screenshots
 
@@ -103,49 +151,6 @@ platform-validator-ops/
 ![Dashboard](screenshots/dashboard.png)
 ![Alert Flow](screenshots/alert-flow.png)
 
-## Deployment
-
-```bash
-# Local demo
-git clone https://github.com/blockmalhotra/platform-validator-ops
-cd platform-validator-ops
-docker compose up --build
-
-# Health check
-curl http://localhost:8080/health
-curl http://localhost:8080/metrics
-
-# Kubernetes
-kubectl apply -f k8s/
-# or follow docs/production-deployment.md and ArgoCD patterns
-```
-
-See Makefile and scripts/ for build and health-check helpers.
-
-## Monitoring
-
-- `/health` returns `{"status":"ok","chain":"...","timestamp":"...","block_height":N}`
-- Prometheus text metrics at `/metrics`
-- Grafana dashboards for validator uptime, sync lag, offline alerts
-- Runbook: docs/runbook.md
-
-## Security
-
-- Secrets use CHANGEME values only (k8s/secret.yml)
-- No validator keys or mnemonics in images or default configs
-- RBAC references in docs/security.md
-- mTLS and Vault patterns noted for production
-
-## CI/CD
-
-`.github/workflows/ci.yml`:
-
-- validate: `docker compose config --quiet`
-- build: Go build + test (Makefile)
-- docker: image build
-
-Runs on push/PR.
-
 ## Roadmap
 
 ### Completed
@@ -153,27 +158,36 @@ Runs on push/PR.
 - Go health API with JSON status and Prometheus endpoint
 - Docker Compose demo with Prometheus + Grafana
 - Kubernetes StatefulSet + Service + supporting manifests for persistent validators
-- Architecture diagrams (Mermaid) and initial CI pipeline
+- Architecture diagrams (Mermaid) and initial CI
 - v0.1.0-in-progress tag and portfolio standardization
 
 ### In Progress
 
-- Recruiter-optimized documentation and consistency across portfolio
+- Recruiter-optimized documentation and cross-portfolio consistency
 - Reference runbooks and security patterns
 
 ### Planned
 
 - Helm charts
-- Full Lighthouse + multi-client support
+- Full multi-client + HA support
 - Vault integration and chaos testing
-- Production hardening per ROADMAP.md
+- Production hardening
 
-## Lessons Learned
+## Business Value
 
-- StatefulSet with volumeClaimTemplates is mandatory for blockchain clients; ephemeral storage loses chain state and forces resync.
-- Dedicated health API sidecar keeps monitoring lightweight and decouples it from the full validator binary.
-- Compose + k8s manifest parity enables fast local iteration while preserving prod behavior.
-- CHANGEME values in secrets force explicit production secret injection and prevent accidental commits of real keys.
+Reduces slashing risk through always-on health signals and persistent storage patterns. Standardizes observability and deployment for validator fleets. Enables faster incident response via unified metrics and runbooks. Provides repeatable Kubernetes reference for staking infrastructure.
+
+## Resume Relevance
+
+This repository demonstrates practical experience with:
+
+- Kubernetes Operations (StatefulSet, Service, volume claims, GitOps)
+- Blockchain Infrastructure (Ethereum validators: Geth/Erigon/Lighthouse)
+- Monitoring and Alerting (Prometheus text, Grafana, health endpoints)
+- Secret Management (CHANGEME hygiene, RBAC patterns)
+- High Availability Design (persistent pods, ordered deployment)
+- Production Troubleshooting (runbooks, metrics for uptime/sync)
+- DevOps Tooling (Docker, Compose, Makefile, CI)
 
 ## License
 
@@ -181,4 +195,4 @@ MIT License. See [LICENSE](LICENSE).
 
 ---
 
-**Reference implementation and learning project. Not production deployment.**
+Reference implementation. Evidence from repository code and manifests only.
