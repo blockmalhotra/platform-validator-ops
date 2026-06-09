@@ -1,16 +1,21 @@
 # platform-validator-ops
 
-Production Ethereum Validator Operations Platform.
+🚧 Status: In Progress
 
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Go](https://img.shields.io/badge/go-1.21-blue)
+This repository is currently under active development and should be considered a reference implementation and learning project until a stable release is published.
+
+![Status](https://img.shields.io/badge/status-in--progress-orange)
 ![Docker](https://img.shields.io/badge/docker-ready-blue)
 ![Kubernetes](https://img.shields.io/badge/k8s-ready-blue)
-![CI](https://github.com/blockmalhotra/platform-validator-ops/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-## Problem
+## Features
 
-Operating Ethereum validators (Geth/Erigon + Lighthouse) at scale requires reliable health monitoring, HA deployment, and observability to avoid slashing and downtime. Manual ops lead to errors in mainnet/holesky/sepolia.
+- Go health API for Ethereum validators (Geth/Erigon/Lighthouse): /health and /metrics with block_height, peers, sync_status
+- Docker demo stack including Prometheus + Grafana
+- Kubernetes StatefulSet + Service manifests for persistent validator nodes
+- Real architecture diagrams (mmd) and runbooks
+- CI with build/test/docker
 
 ## Architecture
 
@@ -24,32 +29,47 @@ graph TD
     G[Demo Compose] --> A
 ```
 
-## Components
+### Component Breakdown
 
-- Go health API (real-time block/peers/sync for validators)
-- Docker + k8s (StatefulSets for persistent chain data)
-- Prometheus/Grafana for monitoring
-- CI/CD (GitHub Actions)
-- Demo stack
+- **Ingress**: Port exposure via docker-compose or k8s Service (no external ingress in demo)
+- **Service**: validator-service.yaml + k8s Service for internal discovery and metrics scrape
+- **Storage**: StatefulSet volume claims for chain data; persistent in prod with Longhorn
+- **Monitoring**: /metrics Prometheus text format; Grafana dashboards; alert flows in diagrams
+- **Deployment flow**: `docker build` + `docker compose up`; `kubectl apply -f k8s/` or ArgoCD for GitOps
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/blockmalhotra/platform-validator-ops
 cd platform-validator-ops
-make build
-make run
-curl http://localhost:8080/health
-```
-
-## Demo
-
-```bash
 docker compose up --build
-# Open http://localhost:3000 for Grafana (if extended)
+curl http://localhost:8080/health
+# metrics: curl http://localhost:8080/metrics
 ```
 
-See demo/docker-compose.yml
+See demo/docker-compose.yml for full stack.
+
+## Roadmap
+
+### v0.1
+- Initial release
+
+### v0.2
+- Feature expansion
+
+### v0.3
+- Production hardening
+
+### v1.0
+- Stable release
+
+## Contributing
+
+See CONTRIBUTING.md. Professional commits, real code only.
+
+## License
+
+MIT License - see LICENSE file.
 
 ## Production Architecture
 
