@@ -78,6 +78,18 @@ graph TD
 - **Monitoring**: /health + Prometheus text; Grafana for uptime, sync lag, alerts
 - **Deployment flow**: `docker compose up --build`; `kubectl apply -f k8s/` or ArgoCD
 
+## Key Engineering Decisions
+
+- StatefulSet chosen for Geth to ensure persistent volumes and ordered startup (k8s/statefulset.yaml shows geth container with volumeClaim and health sidecar).
+- Go health sidecar added to expose /health and /metrics independently of upstream client binaries (app/main.go returns exact status/chain/timestamp/block_height).
+- prometheus.yml mounted via volume in Compose to version config with code (demo/prometheus.yml).
+
+## Production Considerations
+
+- Secrets in k8s/secret.yml contain only CHANGEME; must be overridden from Vault or external store before production apply.
+- Run with pod anti-affinity and resource limits for HA validator fleets.
+- Enable alerts on block_height lag using patterns in docs/runbook.md.
+
 ## Technology Stack
 
 - **Language**: Go (health API)
@@ -173,7 +185,7 @@ kubectl apply -f k8s/
 - Vault integration and chaos testing
 - Production hardening
 
-## Business Value
+## Business Impact
 
 Reduces slashing risk through always-on health signals and persistent storage patterns. Standardizes observability and deployment for validator fleets. Enables faster incident response via unified metrics and runbooks. Provides repeatable Kubernetes reference for staking infrastructure.
 
