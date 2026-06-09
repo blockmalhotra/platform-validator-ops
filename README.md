@@ -2,12 +2,10 @@
 
 🚧 Status: In Progress
 
-This repository is currently under active development and should be considered a reference implementation and learning project until a stable release is published.
+This repository is currently under active development.
+It represents a reference implementation and learning project.
+Features and architecture may change before stable release.
 
-![Status](https://img.shields.io/badge/status-in--progress-orange)
-![Docker](https://img.shields.io/badge/docker-ready-blue)
-![Kubernetes](https://img.shields.io/badge/k8s-ready-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 ## Features
 
@@ -116,3 +114,24 @@ See screenshots/ (architecture.png, validator-fleet-overview.png, dashboard.png,
 ## Architecture Diagrams
 
 See diagrams/architecture.mmd
+
+## Problem
+Operating Ethereum validators at scale requires reliable health monitoring, HA deployment, observability to avoid slashing.
+
+## Components
+- Go health API (block/peers/sync)
+- Docker + k8s StatefulSet
+- Prometheus/Grafana
+- CI/CD
+
+## Monitoring
+/metrics Prometheus, Grafana, alerts.
+
+## Security
+mTLS, RBAC, Vault in prod. CHANGEME in secrets.
+
+## CI/CD
+.github/workflows/ci.yml with build/test/docker.
+
+## Troubleshooting
+See docs/troubleshooting.md
