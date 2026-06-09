@@ -27,7 +27,7 @@ A lightweight Go health API sidecar exposes standardized `/health` and Prometheu
 - Prometheus-compatible /metrics endpoint for scraping
 - Docker Compose demo stack with Prometheus + Grafana
 - Kubernetes StatefulSet for geth (light sync, HTTP) with volume for chain data
-- k8s Service, ConfigMap, Secret (CHANGEME placeholders), and supporting manifests
+- k8s Service, ConfigMap, Secret (CHANGEME values), and supporting manifests
 - Architecture diagrams (Mermaid) and operational runbooks
 - CI pipeline: compose validation, build, docker
 
@@ -38,7 +38,7 @@ A lightweight Go health API sidecar exposes standardized `/health` and Prometheu
 - **Orchestration**: Kubernetes (StatefulSet, Service)
 - **Observability**: Prometheus, Grafana
 - **GitOps patterns**: ArgoCD references
-- **Storage/Secrets**: Persistent volumes, Secret with placeholders
+- **Storage/Secrets**: Persistent volumes, Secret with CHANGEME values
 
 ## Architecture
 
