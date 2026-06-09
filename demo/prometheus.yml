@@ -1,0 +1,6 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'validators'
+    static_configs:
+      - targets: ['validator-health:8080']

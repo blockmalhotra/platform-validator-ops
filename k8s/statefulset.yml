@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nodehealth
+  namespace: blockchain-nodes
+spec:
+  serviceName: nodehealth
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodehealth
+  template:
+    metadata:
+      labels:
+        app: nodehealth
+    spec:
+      containers:
+        - name: nodehealth
+          image: docker.io/library/nodehealth:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              name: rpc
+          envFrom:
+            - configMapRef:
+                name: nodehealth-config
+            - secretRef:
+                name: nodehealth-secrets
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - name: chain-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: chain-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

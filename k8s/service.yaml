@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: validator-health
+spec:
+  selector:
+    app: validator
+  ports:
+  - port: 8080

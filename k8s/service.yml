@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodehealth
+  namespace: blockchain-nodes
+spec:
+  selector:
+    app: nodehealth
+  ports:
+    - name: rpc
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodehealth-external
+  namespace: blockchain-nodes
+spec:
+  selector:
+    app: nodehealth
+  ports:
+    - name: rpc
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort

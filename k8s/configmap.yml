@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nodehealth-config
+  namespace: blockchain-nodes
+data:
+  CHAIN_NAME: "cosmos-devnet"
+  RPC_PORT: "8080"
+  LOG_LEVEL: "info"
